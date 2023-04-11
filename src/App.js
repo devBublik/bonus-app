@@ -5,23 +5,20 @@ import './assets/styles/common.scss';
 import { transformDate } from './assets/helpers/helpers';
 
 function App() {
-    const [token, setToken] = useState(null);
     const [bonus, setBonus] = useState(null);
     const [date, setDate] = useState(null);
     const [burnBonus, setBurnBonus] = useState(null);
     useEffect(() => {
         getToken()
-            .then((res) => {
-                setToken(res.data.accessToken)
+            .then((response) => {
+                getBonus(response.data.accessToken) 
+                    .then((res) => {
+                        setBonus(res.data.data.currentQuantity)
+                        setDate(transformDate(res.data.data.dateBurning))
+                        setBurnBonus(res.data.data.forBurningQuantity) 
+                    })
             })
     }, [])
-    useEffect(() => {
-        getBonus(token).then((res) => {
-            setBonus(res.data.data.currentQuantity)
-            setDate(transformDate(res.data.data.dateBurning))
-            setBurnBonus(res.data.data.forBurningQuantity) 
-        })
-    }, [token])
   return (
     <div className="App">
         <BonusBlock bonus={bonus} burnBonus={burnBonus} date={date}/>
